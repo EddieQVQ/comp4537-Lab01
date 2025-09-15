@@ -13,7 +13,7 @@ function Note(content = '', id = null) {
     this.removeButton = null;
     this.container = null;
     
-    this.createElements = function() {
+    this.create = function() {
         this.container = document.createElement('div');
         this.container.className = 'note-item';
         this.container.setAttribute('data-note-id', this.id);
@@ -46,8 +46,8 @@ function Note(content = '', id = null) {
         if (this.container && this.container.parentNode) {
             this.container.parentNode.removeChild(this.container);
         }
-        if (typeof removeNoteFromStorage === 'function') {
-            removeNoteFromStorage(this.id);
+        if (typeof removeNote === 'function') {
+            removeNote(this.id);
         }
     };
     
@@ -59,14 +59,14 @@ function Note(content = '', id = null) {
     };
 }
 
-function getCurrentPage() {
+function getPage() {
     const path = window.location.pathname;
     if (path.includes('writer.html')) return 'writer';
     if (path.includes('reader.html')) return 'reader';
     return 'index';
 }
 
-function saveNotesToStorage() {
+function saveNotes() {
     try {
         const notesData = notes.map(function(note) {
             return note.getData();
@@ -77,15 +77,15 @@ function saveNotesToStorage() {
     }
 }
 
-function removeNoteFromStorage(noteId) {
+function removeNote(noteId) {
     notes = notes.filter(function(note) {
         return note.id !== noteId;
     });
     
-    saveNotesToStorage();
+    saveNotes();
 }
 
-function initIndexPage() {
+function initIndex() {
     const appTitle = document.getElementById('app-title');
     const studentName = document.getElementById('student-name');
     const writerLink = document.getElementById('writer-link');
@@ -97,7 +97,7 @@ function initIndexPage() {
     if (readerLink) readerLink.textContent = MESSAGES.READER_LABEL;
 }
 
-function initWriterPage() {
+function initWriter() {
     const pageTitle = document.getElementById('page-title');
     const addButton = document.getElementById('add-button');
     const backLink = document.getElementById('back-link');
@@ -106,20 +106,20 @@ function initWriterPage() {
     if (addButton) addButton.textContent = MESSAGES.ADD_NOTE;
     if (backLink) backLink.textContent = MESSAGES.BACK_TO_HOME;
     
-    loadNotesFromStorage();
+    loadNotes();
     
     if (addButton) {
-        addButton.addEventListener('click', addNewNote);
+        addButton.addEventListener('click', addNote);
     }
     
-    saveInterval = setInterval(saveNotesToStorage, 2000);
+    saveInterval = setInterval(saveNotes, 2000);
     
-    timestampInterval = setInterval(updateWriterTimestamp, 1000);
+    timestampInterval = setInterval(updateWriterTime, 1000);
     
-    updateWriterTimestamp();
+    updateWriterTime();
 }
 
-function addNewNote() {
+function addNote() {
     const note = new Note();
     notes.push(note);
     
@@ -127,7 +127,7 @@ function addNewNote() {
     const addButton = document.getElementById('add-button');
     
     if (notesContainer && addButton) {
-        const noteElement = note.createElements();
+        const noteElement = note.create();
         notesContainer.insertBefore(noteElement, addButton);
         
         if (note.textarea) {
@@ -136,7 +136,7 @@ function addNewNote() {
     }
 }
 
-function loadNotesFromStorage() {
+function loadNotes() {
     try {
         const storedData = localStorage.getItem(STORAGE_KEY);
         if (storedData) {
@@ -148,7 +148,7 @@ function loadNotesFromStorage() {
                     const note = new Note(noteData.content, noteData.id);
                     notes.push(note);
                     
-                    const noteElement = note.createElements();
+                    const noteElement = note.create();
                     notesContainer.appendChild(noteElement);
                 });
             }
@@ -158,7 +158,7 @@ function loadNotesFromStorage() {
     }
 }
 
-function updateWriterTimestamp() {
+function updateWriterTime() {
     const timestampElement = document.getElementById('timestamp');
     if (timestampElement) {
         const now = new Date();
@@ -172,23 +172,23 @@ function updateWriterTimestamp() {
     }
 }
 
-function initReaderPage() {
+function initReader() {
     const pageTitle = document.getElementById('page-title');
     const backLink = document.getElementById('back-link');
     
     if (pageTitle) pageTitle.textContent = MESSAGES.READER_PAGE_TITLE;
     if (backLink) backLink.textContent = MESSAGES.BACK_TO_HOME;
     
-    loadAndDisplayNotes();
+    displayNotes();
     
-    retrieveInterval = setInterval(loadAndDisplayNotes, 2000);
+    retrieveInterval = setInterval(displayNotes, 2000);
     
-    timestampInterval = setInterval(updateReaderTimestamp, 1000);
+    timestampInterval = setInterval(updateReaderTime, 1000);
     
-    updateReaderTimestamp();
+    updateReaderTime();
 }
 
-function loadAndDisplayNotes() {
+function displayNotes() {
     try {
         const storedData = localStorage.getItem(STORAGE_KEY);
         const notesDisplay = document.getElementById('notes-display');
@@ -214,7 +214,7 @@ function loadAndDisplayNotes() {
     }
 }
 
-function updateReaderTimestamp() {
+function updateReaderTime() {
     const timestampElement = document.getElementById('timestamp');
     if (timestampElement) {
         const now = new Date();
@@ -229,17 +229,17 @@ function updateReaderTimestamp() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    const currentPage = getCurrentPage();
+    const currentPage = getPage();
     
     switch (currentPage) {
         case 'index':
-            initIndexPage();
+            initIndex();
             break;
         case 'writer':
-            initWriterPage();
+            initWriter();
             break;
         case 'reader':
-            initReaderPage();
+            initReader();
             break;
     }
 });
@@ -255,7 +255,7 @@ window.addEventListener('beforeunload', function() {
         clearInterval(timestampInterval);
     }
     
-    if (getCurrentPage() === 'writer') {
-        saveNotesToStorage();
+    if (getPage() === 'writer') {
+        saveNotes();
     }
 });
