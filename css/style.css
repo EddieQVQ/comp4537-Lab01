@@ -1,0 +1,86 @@
+#app-title {
+    text-align: center;
+}
+
+#student-name {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    padding: 20px;
+    min-height: 500px;
+    position: relative;
+    border: 2px solid #0056b3;
+}
+
+.timestamp {
+    font-size: 21px;
+    color: gray;
+}
+
+.navigation {
+    text-align: center;
+    margin-top: 70px;
+}
+
+.nav-button, .back-button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 0 10px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+}
+
+.notes-container {
+    margin-bottom: 50px;
+}
+
+.note-item {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.note-textarea {
+    padding: 10px;
+    border: 1px solid black;
+    color: black;
+    font-size: 20px;
+}
+
+.remove-button {
+    margin-left:10px;
+    background-color: orange;
+    color: white;
+    border: 1px solid black;
+    font-size: 18px;
+}
+
+
+.add-button {
+    margin-top: 20px;
+    background-color: #28a745;
+    color: white;
+    border: 1px solid black;
+    font-size: 18px;
+}
+
+
+.note-display-item {
+    padding: 10px;
+    border: 1px solid black;
+    color: black;
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.footer {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+}
+
